@@ -1,0 +1,96 @@
+# Ref URL: https://git-scm.com/downloads
+# Update apt repository and install git
+
+sudo apt update
+
+sudo apt install git
+
+git --version
+
+===
+
+# Configure/Setup git to local machine
+
+# Setup a name to git
+git config --global user.name "Your Name"
+
+# Setup a email to git
+git config --global user.email "youremail@domain.com"
+
+# create a local repo
+git init
+
+# to add newly or updated file to stage for commit changes
+git add file-name or git add . (. <== will take all newly added files and folders)
+
+# to commit files to repo
+git commit -m "Write here a commit comment for reference"
+
+# to check branch
+git branch
+
+# create branch
+git branch <branchname>
+
+or
+
+#create branch and switch to created branch
+git checkout -b <branchname>
+
+# Switch to new branch
+git checkout <branchname>
+
+# Check status
+git status
+
+#Git commit log:
+git log
+
+# remove/delete files from system and repo
+git rm <filename>
+
+# remove file from git repository but not from system
+git rm --cached <filename>
+
+# To force remove a stage files
+git rm -f <filename>
+
+# Merge back the created branch with the master branch
+	1. switch to the main branch
+		git checkout <main branch name>
+	2. merge your feature branch into the main branch
+		git merge <new-feature branch name>
+
+#Add the company's remote repository.
+git remote add origin <remote repository url>
+
+# Pull changes from remote repo to local (in pull origin, origin keep store remote repo url)
+git pull origin <branchname>
+
+# Push changes to remote repo (in push origin, origin keep store remote repo url)
+git push origin <branchname>  or  git push -u origin main
+
+username: ---> give your git hub username
+password: given the token generated
+
+# Remote repo list:
+git remote -v
+
+# fetch changes from remote repo without changes to local working directory
+git fetch origin
+
+# install and configure merge tool
+install meldmerge merging tool for window from https://meldmerge.org/
+install kdiff3 for ubuntu Linux - sudo apt install kdiff3
+
+# configure merge tool in git
+git config --global merge.tool "meld"   or 
+
+git config --global merge.tool "kdiff3"
+
+# mentioned merge tool path to git
+git config --global mergetool.meld.path "C:\Program Files\Meld\Meld.exe"
+
+# to use merge tool fire below command
+git mergetool
+

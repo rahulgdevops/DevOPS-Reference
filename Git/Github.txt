@@ -1,0 +1,33 @@
+
+
+1) Create a remote repository
+	1. go to github.com and login to github
+	2. Click on the "+" icon in the top right corner and select "New repository".
+	3. Fill out the repository details:
+	4. Click "Create repository"
+
+2) Generate Token
+	1. Go to GitHub and sign in with your account.
+	2. Access Developer Settings:
+		1. In the upper-right corner of any page, click your profile photo, then click Settings.
+		2. In the left sidebar, click Developer settings.
+	3. Generate New Token:
+		1. In the left sidebar, click Personal access tokens.
+		2. Click Generate new token.
+	4. Select Scopes:
+		1. Give your token a descriptive name in the Note field
+		2. Select the scopes or permissions you'd like to grant this token. For example, selecting the repo scope will grant full control of private repositories.
+		3. If you’re not sure which scopes to select, you can read more about each scope on the: https://docs.github.com/en/developers/apps/building-oauth-apps/scopes-for-oauth-apps
+	5. Generate Token:
+		1. After selecting the desired scopes, click Generate token at the bottom of the page.
+
+
+
+GitHub Desktop UI tool: Everything with UI actions. It works only on MAC and Windows
+Download Source: https://desktop.github.com/
+
+VS Code Editor will automatically adapt with GitHub Desktop
+Please install GitHub Desktop and immediately install VSCode
+VsCode Download URL: https://code.visualstudio.com/download
+
+Documentation: https://docs.github.com/en/desktop
