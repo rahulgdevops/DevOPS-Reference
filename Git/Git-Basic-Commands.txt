@@ -55,11 +55,17 @@ git rm --cached <filename>
 # To force remove a stage files
 git rm -f <filename>
 
-# Merge back the created branch with the master branch
+# Merge the created branch with the master branch
 	1. switch to the main branch
 		git checkout <main branch name>
 	2. merge your feature branch into the main branch
 		git merge <new-feature branch name>
+
+# Rebase (The main aim of rebasing is to maintain a progressively straight and cleaner project history.)
+	git rebase master branch_x (where branch_x is the branch we want to rebase)
+		or
+	git checkout branch_x
+	git rebase master or git rebase -i master ( where -i means Interactive rebasing)	
 
 #Add the company's remote repository.
 git remote add origin <remote repository url>
@@ -94,3 +100,5 @@ git config --global mergetool.meld.path "C:\Program Files\Meld\Meld.exe"
 # to use merge tool fire below command
 git mergetool
 
+# to know if a branch is not merged to the master branch in git
+git branch -no-merged

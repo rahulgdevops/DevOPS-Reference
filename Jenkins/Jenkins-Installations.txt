@@ -1,0 +1,39 @@
+To install jenkins on ubuntu
+#Ref URL:
+#https://www.jenkins.io/doc/book/installing/linux/
+#https://www.digitalocean.com/community/tutorials/how-to-install-jenkins-on-ubuntu-22-04
+
+# For Jenkins, Java is require so will install java
+sudo apt install fontconfig openjdk-17-jre
+
+# add repository key and repository source
+
+sudo wget -O /usr/share/keyrings/jenkins-keyring.asc \
+  https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key
+echo "deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc]" \
+  https://pkg.jenkins.io/debian-stable binary/ | sudo tee \
+  /etc/apt/sources.list.d/jenkins.list > /dev/null
+
+#Update system repository
+sudo apt-get update
+
+#install jenkins
+sudo apt-get install jenkins
+
+# Beginning with Jenkins 2.335 and Jenkins 2.332.1, the package is configured with systemd rather than the older System V init.
+# Ref URL Docs for systemd: https://www.digitalocean.com/community/tutorials/how-to-use-systemctl-to-manage-systemd-services-and-units
+# Setup Jenkins as a daemon launched on start.
+systemctl cat jenkins
+
+# If Jenkins fails to start because a port is in use
+systemctl edit jenkins
+
+# add the following:
+[Service]
+Environment="JENKINS_PORT=8081"
+
+# start jenkins service
+sudo systemctl start jenkins.service
+
+# to check jenkins service status
+sudo systemctl status jenkins
