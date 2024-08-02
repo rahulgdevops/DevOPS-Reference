@@ -1,0 +1,263 @@
+Template1 - storing credential direct in the inventory file
+
+# inventory.yaml
+myhosts:
+  hosts:
+    system-host-name:
+      ansible_host: ip_address
+      ansible_user: user_name
+      ansible_password: user_password
+      ansible_become: yes
+      ansible_become_method: sudo
+      ansible_become_pass: user_password
+
+  children:
+    test_systems:
+      hosts:
+        ubuntu-slave:
+
+=====
+Template2 storing credential direct in the inventory file
+
+# inventory.yaml
+all:
+  hosts:
+    host1:
+      ansible_host: 192.168.1.101
+      ansible_user: your_ssh_user
+      ansible_password: your_ssh_password
+      ansible_become: true
+      ansible_become_method: sudo
+      ansible_become_password: your_become_password
+    host2:
+      ansible_host: 192.168.1.102
+      ansible_user: your_ssh_user
+      ansible_password: your_ssh_password
+      ansible_become: true
+      ansible_become_method: sudo
+      ansible_become_password: your_become_password
+
+  children:
+    group_1:
+      hosts:
+        host1:
+
+  children:
+    group_2:
+      hosts:
+        host2:
+
+  vars:
+    ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
+
+In this file:
+
+ansible_host: specifies the IP address of the remote host.
+ansible_user: specifies the SSH username.
+ansible_password: specifies the SSH password.
+ansible_become: enables privilege escalation.
+ansible_become_method: specifies the method of privilege escalation (e.g., sudo).
+ansible_become_password: specifies the password for privilege escalation.
+ansible_ssh_common_args: adds additional SSH options (here, it disables strict host key checking).
+Make sure to replace your_ssh_user, your_ssh_password, and your_become_password with the actual user credentials and become password.
+
+===
+
+To use this inventory file with Ansible, save it to a file, for example, inventory.yaml, and specify it with the -i option in your Ansible commands:
+
+ansible-playbook -i inventory.yaml your_playbook.yml
+
+Certainly! Below is an example of a YAML inventory file for Ansible that includes SSH user credentials and become password for privilege escalation.
+
+```yaml
+all:
+  hosts:
+    host1:
+      ansible_host: 192.168.1.101
+      ansible_user: your_ssh_user
+      ansible_password: your_ssh_password
+      ansible_become: true
+      ansible_become_method: sudo
+      ansible_become_password: your_become_password
+    host2:
+      ansible_host: 192.168.1.102
+      ansible_user: your_ssh_user
+      ansible_password: your_ssh_password
+      ansible_become: true
+      ansible_become_method: sudo
+      ansible_become_password: your_become_password
+  vars:
+    ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
+```
+
+In this file:
+
+- `ansible_host` specifies the IP address of the remote host.
+- `ansible_user` specifies the SSH username.
+- `ansible_password` specifies the SSH password.
+- `ansible_become` enables privilege escalation.
+- `ansible_become_method` specifies the method of privilege escalation (e.g., `sudo`).
+- `ansible_become_password` specifies the password for privilege escalation.
+- `ansible_ssh_common_args` adds additional SSH options (here, it disables strict host key checking).
+
+Make sure to replace `your_ssh_user`, `your_ssh_password`, and `your_become_password` with the actual user credentials and become password.
+
+To use this inventory file with Ansible, save it to a file, for example, `inventory.yaml`, and specify it with the `-i` option in your Ansible commands:
+
+```sh
+ansible-playbook -i inventory.yaml your_playbook.yml
+```
+
+Remember to handle sensitive information securely and consider using Ansible Vault to encrypt passwords if sharing this file.
+
+====
+
+====
+
+template for use of vault for credential:
+
+Create the Vault File: First, create a file to store your encrypted variables, for example, vault.yml.
+
+Encrypt the Vault File: Use the ansible-vault encrypt command to encrypt the file.
+
+Create the Inventory File: Reference the encrypted variables in your inventory file.
+
+Step 1: Create vault.yml
+
+This file will contain your sensitive information in plain text before encryption. For example:
+
+ansible_user: your_ssh_user
+ansible_password: your_ssh_password
+ansible_become_password: your_become_password
+
+Step 2: Encrypt vault.yml
+
+Encrypt the vault.yml file using the following command:
+
+ansible-vault encrypt vault.yml
+
+You will be prompted to create a password for the vault. Remember this password, as you will need it to run playbooks that use the vault.
+
+===
+Step 3: Create the Inventory File
+Create an inventory file, for example, inventory.yml, that references the encrypted variables:
+
+all:
+  hosts:
+    host1:
+      ansible_host: 192.168.1.101
+      ansible_user: "{{ ansible_user }}"
+      ansible_password: "{{ ansible_password }}"
+      ansible_become: true
+      ansible_become_method: sudo
+      ansible_become_password: "{{ ansible_become_password }}"
+    host2:
+      ansible_host: 192.168.1.102
+      ansible_user: "{{ ansible_user }}"
+      ansible_password: "{{ ansible_password }}"
+      ansible_become: true
+      ansible_become_method: sudo
+      ansible_become_password: "{{ ansible_become_password }}"
+  vars:
+    ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
+
+
+Step 4: Running the Playbook
+When you run your playbook, you will need to specify the vault password file or be prompted to enter the vault password. Here's how to do it:
+
+ansible-playbook -i inventory.yml your_playbook.yml --ask-vault-pass
+
+Alternatively, you can store the vault password in a file and specify the file:
+
+Create a file, for example, vault_pass.txt, and put your vault password in it.
+
+Use the --vault-password-file option to specify the password file:
+
+ansible-playbook -i inventory.yml your_playbook.yml --vault-password-file vault_pass.txt
+
+Summary
+vault.yml: Contains encrypted sensitive information.
+inventory.yml: References the encrypted variables.
+ansible-playbook command: Run with the --ask-vault-pass or --vault-password-file option to decrypt the vault.
+
+By following these steps, you ensure that your sensitive information is encrypted and secure while still accessible to your Ansible playbooks.
+
+Creating an Ansible inventory file that uses SSH keys for authentication follows best practices for security and maintainability. Below is an example of an inventory template that uses SSH keys. Additionally, I'll include best practices such as organizing your inventory and using group variables.
+
+Example Inventory Template
+Directory Structure
+Organize your inventory with a directory structure:
+
+inventory/
+├── group_vars/
+│   └── all.yml
+├── hosts.yml
+└── ssh_keys/
+    ├── id_rsa
+    └── id_rsa.pub
+
+group_vars/all.yml: Stores common variables for all hosts.
+hosts.yml: Defines the hosts and groups.
+ssh_keys/: Directory to store SSH keys.
+
+1. Create SSH Keys
+Generate an SSH key pair if you don't already have one:
+
+ssh-keygen -t rsa -b 2048 -f inventory/ssh_keys/id_rsa
+
+2. group_vars/all.yml
+Store common variables and SSH settings:
+
+ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
+ansible_ssh_private_key_file: "{{ inventory_dir }}/ssh_keys/id_rsa"
+ansible_user: your_ssh_user
+ansible_become: true
+ansible_become_method: sudo
+
+Replace your_ssh_user with the actual username you use for SSH.
+
+3. hosts.yml
+Define your hosts and groups:
+
+all:
+  hosts:
+    host1:
+      ansible_host: 192.168.1.101
+    host2:
+      ansible_host: 192.168.1.102
+
+  children:
+    web_servers:
+      hosts:
+        host1:
+    db_servers:
+      hosts:
+        host2
+
+In this example, host1 and host2 are part of the all group, and they are also part of the web_servers and db_servers groups, respectively.
+
+Best Practices:
+
+Use SSH Keys: Store your private keys securely and avoid using passwords for SSH authentication.
+
+Organize Inventory: Use group variables (group_vars directory) to manage common settings for hosts.
+
+Encrypt Sensitive Data: Use Ansible Vault for encrypting sensitive data like passwords if they are needed.
+
+Use Common Args: Utilize ansible_ssh_common_args to manage common SSH options.
+Modular Configuration: Separate configuration into different files and directories for better organization and maintainability.
+
+Running Playbooks
+When running your playbook, specify the inventory directory:
+
+ansible-playbook -i inventory/hosts.yml your_playbook.yml
+
+Summary:
+
+Directory Structure: Organize your inventory files and keys for maintainability.
+
+SSH Key Authentication: Use SSH keys stored securely and specify them in group_vars.
+
+Best Practices: Follow best practices for security, organization, and maintainability.
+
+By using this template and adhering to best practices, you ensure a secure and maintainable configuration for your Ansible inventory.

@@ -28,9 +28,14 @@ systemctl cat jenkins
 # If Jenkins fails to start because a port is in use
 systemctl edit jenkins
 
+# you can update port using below command line
+sudo nano /etc/default/jenkins
+
 # add the following:
 [Service]
 Environment="JENKINS_PORT=8081"
+# need fire below command if not affect the new changes
+sudo systemctl daemon-reload
 
 # start jenkins service
 sudo systemctl start jenkins.service

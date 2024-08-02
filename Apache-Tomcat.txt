@@ -1,0 +1,121 @@
+# Create Tomcat User and Group
+
+# Create group for tomcat
+sudo groupadd tomcat
+
+# create user for tomcat
+sudo useradd -s /bin/false -g tomcat -d /opt/tomcat tomcat
+
+# change directory to tmp
+cd /tmp
+
+# Download the latest binary Tomcat release navigate to the https://tomcat.apache.org/
+curl -O https://dlcdn.apache.org/tomcat/tomcat-10/v10.1.25/bin/apache-tomcat-10.1.25.tar.gz
+
+# create a new /opt/tomcat/ directory with the command:
+sudo mkdir /opt/tomcat
+
+# To extract the tar.gz Tomcat file
+sudo tar xzvf apache-tomcat-10*tar.gz -C /opt/tomcat --strip-components=1
+
+# Move to the directory where the Tomcat installation is located:
+cd /opt/tomcat
+
+# Grant group and user ownership over the installation directory to the tomcat group and user with the command
+sudo chown -RH tomcat: /opt/tomcat
+
+# Lastly, change script permissions to grant execute access in /opt/tomcat/bin/with:
+sudo sh -c 'chmod +x /opt/tomcat/bin/*.sh'
+
+# Since you are going to to use Tomcat as a service, you need to create a systemd service file
+# To configure the file, you first need to find the JAVA_HOME path. This is the exact location of the Java installation package.
+# To do so, prompt the system to give you information about the Java packages installed on the system. In the terminal, type:
+sudo update-java-alternatives -l
+
+# Choose the version you want to use and copy its location. With that, you can move on to create the service file.
+# Create and open a new file in the /etc/system/system under the name tomcat.service:
+sudo nano /etc/systemd/system/tomcat.service
+
+# Once the file opens, copy and paste the content below, changing the JAVA_HOME value to the information you found in the previous step.
+[Unit]
+Description=Apache Tomcat Web Application Container
+After=network.target
+[Service]
+Type=forking
+User=tomcat
+Group=tomcat
+Environment="JAVA_HOME=/usr/lib/jvm/java-1.17.0-openjdk-amd64"
+Environment="JAVA_OPTS=-Djava.security.egd=file:///dev/urandom -Djava.awt.headless=true"
+Environment="CATALINA_BASE=/opt/tomcat"
+Environment="CATALINA_HOME=/opt/tomcat"
+Environment="CATALINA_PID=/opt/tomcat/temp/tomcat.pid"
+Environment="CATALINA_OPTS=-Xms512M -Xmx1024M -server -XX:+UseParallelGC"
+ExecStart=/opt/tomcat/bin/startup.sh
+ExecStop=/opt/tomcat/bin/shutdown.sh
+[Install]
+WantedBy=multi-user.target
+
+# Save and Exit the file (Ctrl+X, followed by y[es] and Enter).
+
+# For the changes to take place, reload the system daemon with the command:
+sudo systemctl daemon-reload
+
+# Now, you can finally start the Tomcat service:
+sudo systemctl start tomcat
+
+# Verify the Apache Tomcat service is running with the command:
+sudo systemctl status tomcat
+
+# Open Port 8080 to allow traffic through it with the command:
+sudo ufw allow 8080/tcp
+
+# Configure Web Management Interface
+# you need to create a user who can use the web management interface.
+# To do this, open and edit the users file,  Open the users file with the command:
+sudo nano /opt/tomcat/conf/tomcat-users.xml
+
+# Delete everything from the file and add the following:
+<?xml version="1.0" encoding="UTF-8"?>
+<tomcat-users>
+  <role rolename="manager-gui"/>
+  <role rolename="manager-script"/>
+  <role rolename="manager-jmx"/>
+  <role rolename="manager-status"/>
+  <role rolename="admin-gui"/>
+  <role rolename="admin-script"/>
+  <user username="admin" password="Your_Password" roles="manager-gui, manager-script, manager-jmx, manager-status, admin-gui, admin-script"/>
+</tomcat-users>
+
+# Save and Exit the file.
+
+# Configure Remote Access
+# This is required. By default, Tomcat is only accessible from the local machine.
+# First, open the manager file:
+sudo nano /opt/tomcat/webapps/manager/META-INF/context.xml
+
+# Next, decide whether to grant access from a. anywhere or b. from a specific IP address.
+# To make it publicly accessible, add the following lines to the file:
+<Context antiResourceLocking="false" privileged="true">
+<!--
+<Valve className="org.apache.catalina.valves.RemoteAddrValve"
+allow="127\.\d+\.\d+.d+|::1|0000:1" />
+-->
+</Context>
+
+# To allow access from a specific IP address, add the IP to the previous command, as follows:
+<Context antiResourceLocking="false" privileged="true">
+<!--
+<Valve className="org.apache.catalina.valves.RemoteAddrValve"
+allow="127\.\d+\.\d+\.\d+|::1|0000:1|THE.IP.ADDRESS." />
+-->
+</Context>
+
+# Repeat the same process for the host-manager file.
+# Start by opening the file with the command:
+sudo nano /opt/tomcat/latest/webapps/host-manager/META-INF/context.xml
+
+
+
+
+
+

@@ -1,0 +1,9 @@
+# Ref. Doc: https://docs.ansible.com/ansible/latest/getting_started/get_started_ansible.html
+# Getting Started Docs: https://docs.ansible.com/ansible/latest/getting_started/get_started_inventory.html#get-started-inventory
+
+# Install Ansible
+pip install ansible
+
+#Create a project folder on your filesystem.
+mkdir ansible_quickstart && cd ansible_quickstart
+
