@@ -1,0 +1,58 @@
+1. Core Docker Commands
+
+docker image ls: List all locally available images.
+docker image pull <image_name>:<tag>: Download an image from Docker Hub (e.g., docker image pull ubuntu:latest).
+docker image rmi <image_name>:<tag>: Remove an image.
+docker container ls: List all running containers.
+docker container ls -a: List all containers (running and stopped).
+docker container run -d <image_name>:<tag>: Run a container in detached mode (background).
+docker container run -it <image_name>:<tag> /bin/bash: Run a container interactively with a bash shell.
+docker container stop <container_id>: Stop a running container.
+docker container start <container_id>: Start a stopped container.
+docker container restart <container_id>: Restart a running container.
+docker container rm <container_id>: Remove a stopped container.
+docker exec -it <container_id> /bin/bash: Execute a command within a running container.
+docker ps -a: (Shorthand) List all containers.
+docker images: (Shorthand) List all images.
+
+2. Dockerfile Basics
+
+FROM <image_name>:<tag>: Base image for your Docker image.
+WORKDIR /path/to/workdir: Set the working directory within the container.
+COPY <src> <dest>: Copy files/folders from your host machine to the container.
+ADD <src> <dest>: Similar to COPY, but supports advanced features like URL downloads.
+RUN <command>: Execute commands within the container (e.g., RUN apt-get update && apt-get install -y <package>).
+CMD ["executable", "param1", "param2"]: Set the default command to run when the container starts.
+ENTRYPOINT ["executable", "param1"]: Define an executable that will always run when the container starts.
+
+3. Docker Compose
+
+docker-compose up -d: Start all services defined in your docker-compose.yml file in detached mode.
+docker-compose down: Stop and remove all containers and networks created by docker-compose.
+docker-compose build: Build the images defined in your docker-compose.yml file.
+docker-compose logs -f <service_name>: View real-time logs for a specific service.
+
+4. Docker Networking
+
+Bridge Network: Default network for containers.
+Host Network: Containers share the host machine's network stack.
+Overlay Network: Allows communication between containers on different hosts.
+
+5. Docker Volumes
+
+Bind Mounts: Mount a directory from your host machine into the container.
+Named Volumes: Create a persistent volume that is managed by Docker.
+
+6. Docker Images
+
+Multi-stage Builds: Create smaller, more efficient images by using multiple stages in your Dockerfile.
+Image Layers: Docker images are built in layers, allowing for efficient caching and updates.
+
+7. Tips & Tricks
+
+Use a .dockerignore file: Exclude unnecessary files from your Docker build context.
+Leverage Docker Hub for image sharing and discovery.
+Use a base image with a minimal footprint.
+Write clean and concise Dockerfiles.
+Utilize Docker Compose for multi-container applications.
+Explore Docker Swarm or Kubernetes for container orchestration.
