@@ -1,0 +1,100 @@
+let's explore a real-world Docker Compose project example: a simple web application with a front-end and a back-end.
+
+1. Project Structure
+
+my-web-app/
+├── docker-compose.yml
+├── frontend/
+│   ├── package.json
+│   ├── ... (frontend code)
+│   └── Dockerfile
+└── backend/
+    ├── requirements.txt
+    ├── ... (backend code)
+    └── Dockerfile
+
+2. frontend/Dockerfile
+
+FROM node:18-alpine
+
+WORKDIR /app
+
+COPY package*.json ./
+
+RUN npm install
+
+COPY . .
+
+EXPOSE 3000
+
+CMD ["npm", "start"] 
+
+3. backend/Dockerfile
+
+FROM python:3.11-slim-buster
+
+WORKDIR /app
+
+COPY requirements.txt .
+
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY . .
+
+EXPOSE 8000
+
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"] 
+
+4. docker-compose.yml
+
+version: "3.9"
+
+services:
+  web:
+    build: ./frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - api
+
+  api:
+    build: ./backend
+    ports:
+      - "8000:8000"
+
+5. Explanation
+
+docker-compose.yml:
+
+version: Specifies the Compose file version.
+services: Defines the different services in your application:
+web:
+build: Instructs Compose to build the image using the Dockerfile in the frontend directory.
+ports: Maps port 3000 on the host machine to port 3000 in the container.
+depends_on: Ensures that the api service is started before the web service.
+api:
+build: Builds the image using the Dockerfile in the backend directory.
+ports: Maps port 8000 on the host machine to port 8000 in the container.
+Dockerfiles:
+
+Each Dockerfile defines the build instructions for a specific service.
+They specify the base image, working directory, installation of dependencies, and the command to run when the container starts.
+6. Running the Application
+
+Navigate to the project directory:
+
+cd my-web-app
+
+Start the application:
+
+docker-compose up -d 
+Access the application:
+
+Open your web browser and visit http://localhost:3000.
+
+7. Key Concepts Demonstrated
+
+Multi-container Architecture: The application consists of two separate containers (frontend and backend).
+Service Dependencies: The web service depends on the api service, ensuring the correct order of startup.
+Port Mapping: Exposes the application's ports to the host machine for access.
+Dockerfile Best Practices: Using a minimal base image, copying only necessary files, and optimizing the build process.
